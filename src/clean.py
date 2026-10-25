@@ -2,7 +2,7 @@ import os
 import pandas as pd, numpy as np
 from validate import validate
 
-RAW, OUT = "data/food-inspections.csv", "data/clean.csv"
+RAW, OUT = "data/raw_full.csv", "data/clean.csv"
 
 def load_raw():
     df = pd.read_csv(RAW, dtype=str)
