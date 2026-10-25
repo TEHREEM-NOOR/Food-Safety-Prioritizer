@@ -1,0 +1,4 @@
+model,best_params,cv_auc_mean,cv_auc_std,test_auc,accuracy,baseline_acc,precision,recall,precision@top5%,threshold,total_cost,cost_if_inspect_none,TN,FP,FN,TP
+Decision tree,"{'clf__max_depth': 6, 'clf__min_samples_leaf': 200}",0.678,0.005,0.662,0.706,0.782,0.346,0.39,0.365,0.249,47476,55458,52675,13636,11280,7206
+Naive Bayes,{'clf__alpha': 0.1},0.618,0.02,0.532,0.738,0.782,0.322,0.182,0.344,0.641,52457,55458,59223,7088,15123,3363
+Neural network,"{'clf__alpha': 0.0001, 'clf__hidden_layer_sizes': (64, 32)}",0.686,0.009,0.653,0.68,0.782,0.334,0.467,0.387,0.249,46797,55458,49061,17250,9849,8637

@@ -1,0 +1,4 @@
+variant,cv_auc_mean,cv_auc_std,test_auc
+All features,0.678,0.005,0.662
+Feature selection (top 15 by ANOVA F),0.675,0.008,0.647
+PCA (6 components on numeric),0.656,0.011,0.634

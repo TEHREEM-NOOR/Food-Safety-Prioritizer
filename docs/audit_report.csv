@@ -1,0 +1,11 @@
+fault,category,detection,count_before,count_after
+missing facility_type,Missing value,facility_type.isna(),4768,0
+missing zip,Missing value,zip.isna(),50,25
+missing/zero coordinates,Missing value,latitude.isna(),690,598
+duplicate inspection_id,Duplicate data,inspection_id.duplicated(),149,0
+facility_type spelling variants,Inconsistent values,nunique(raw) - nunique(strip.lower),49,0
+invalid zip format,Inconsistent values / noise,~zip.str.fullmatch(r'\d{5}') & zip.notna(),0,0
+coordinates outside Chicago,Outlier / impossible value,"lat not in [41.6,42.1] or lon not in [-87.95,-87.5]",0,0
+unparseable or future dates,Impossible value,to_datetime fails or > today,0,0
+invalid risk category,Inconsistent values,risk not in Risk 1/2/3,100,0
+non-informative outcomes,Irrelevant data,results not in Pass/Fail/Pass w/ Conditions,25224,0
