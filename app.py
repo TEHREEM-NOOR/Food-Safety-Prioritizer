@@ -432,76 +432,83 @@ def page_performance():
 
     st.markdown("<div style='height: 20px;'></div>", unsafe_allow_html=True)
 
-    # Interactive Plots: ROC Curves & Confusion Matrix
-    col_roc, col_cm = st.columns([1.1, 0.9])
-
+    # Interactive Plots: Two Separate Full-Width Rows for Desktop Readability
     y = load_sample()["target"].to_numpy()
 
-    with col_roc:
-        st.markdown(section_title_html("Test ROC Curves (20,000 Sample)", "activity"), unsafe_allow_html=True)
-        fig_roc = go.Figure()
+    # --- ROW 1: ROC Curves ---
+    st.markdown(section_title_html("Test ROC Curves (20,000 Sample)", "activity"), unsafe_allow_html=True)
+    fig_roc = go.Figure()
 
-        for idx, name in enumerate(models):
-            s_ = sample_scores(name)
-            fpr, tpr, _ = roc_curve(y, s_)
-            auc_val = roc_auc_score(y, s_)
-            fig_roc.add_trace(go.Scatter(
-                x=fpr, y=tpr,
-                mode="lines",
-                name=f"{name} (AUC {auc_val:.3f})",
-                line=dict(width=2.5, color=CHART_PALETTE[idx % len(CHART_PALETTE)])
-            ))
-
+    for idx, name in enumerate(models):
+        s_ = sample_scores(name)
+        fpr, tpr, _ = roc_curve(y, s_)
+        auc_val = roc_auc_score(y, s_)
         fig_roc.add_trace(go.Scatter(
-            x=[0, 1], y=[0, 1],
+            x=fpr, y=tpr,
             mode="lines",
-            name="Random Guessing (AUC 0.500)",
-            line=dict(color="#B8AFA9", dash="dash", width=1.5)
+            name=f"{name} (AUC {auc_val:.3f})",
+            line=dict(width=2.5, color=CHART_PALETTE[idx % len(CHART_PALETTE)])
         ))
 
-        fig_roc.update_layout(get_plotly_layout(height=420, title="Receiver Operating Characteristic"))
-        fig_roc.update_xaxes(title="False Positive Rate (1 \u2212 Specificity)")
-        fig_roc.update_yaxes(title="True Positive Rate (Sensitivity / Recall)")
-        st.plotly_chart(fig_roc, use_container_width=True)
+    fig_roc.add_trace(go.Scatter(
+        x=[0, 1], y=[0, 1],
+        mode="lines",
+        name="Random Guessing (AUC 0.500)",
+        line=dict(color="#B8AFA9", dash="dash", width=1.5)
+    ))
 
-    with col_cm:
-        st.markdown(section_title_html(f"Confusion Matrix: {c['model']}", "grid"), unsafe_allow_html=True)
-        cur_thr = current_threshold()
-        r = consequences(y, sample_scores(c["model"]), cur_thr, c)
+    fig_roc.update_layout(get_plotly_layout(height=420, title="Receiver Operating Characteristic"))
+    fig_roc.update_xaxes(title="False Positive Rate (1 \u2212 Specificity)")
+    fig_roc.update_yaxes(title="True Positive Rate (Sensitivity / Recall)")
+    st.plotly_chart(fig_roc, use_container_width=True)
 
-        # Interactive Plotly Heatmap
-        z_vals = [[r["tn"], r["fp"]], [r["fn"], r["tp"]]]
-        x_cats = ["Predicted Pass", "Predicted Violator"]
-        y_cats = ["Actual Pass", "Actual Violator"]
+    st.markdown("<div style='height: 24px;'></div>", unsafe_allow_html=True)
 
-        # Annotations text
-        text_vals = [
-            [f"True Neg (TN)<br><b>{r['tn']:,}</b>", f"False Pos (FP)<br><b>{r['fp']:,}</b><br><small>Wasted visit</small>"],
-            [f"False Neg (FN)<br><b>{r['fn']:,}</b><br><small>Missed outbreak (3x cost)</small>", f"True Pos (TP)<br><b>{r['tp']:,}</b><br><small>Caught violator</small>"]
+    # --- ROW 2: Confusion Matrix ---
+    st.markdown(section_title_html(f"Confusion Matrix: {c['model']}", "grid"), unsafe_allow_html=True)
+    cur_thr = current_threshold()
+    r = consequences(y, sample_scores(c["model"]), cur_thr, c)
+
+    # Interactive Plotly Heatmap
+    z_vals = [[r["tn"], r["fp"]], [r["fn"], r["tp"]]]
+    x_cats = ["Predicted Pass", "Predicted Violator"]
+    y_cats = ["Actual Pass", "Actual Violator"]
+
+    # Annotations text — clean formatting without unsupported <small> tags
+    text_vals = [
+        [
+            f"<b>True Negative (TN)</b><br>{r['tn']:,}<br>(Correct Routine Skip)",
+            f"<b>False Positive (FP)</b><br>{r['fp']:,}<br>(Wasted Inspection Visit)"
+        ],
+        [
+            f"<b>False Negative (FN)</b><br>{r['fn']:,}<br>(Missed Outbreak \u2014 3\u00d7 Cost)",
+            f"<b>True Positive (TP)</b><br>{r['tp']:,}<br>(Caught Violator)"
         ]
+    ]
 
-        fig_cm = go.Figure(data=go.Heatmap(
-            z=z_vals,
-            x=x_cats,
-            y=y_cats,
-            colorscale=[[0, SURFACE_SUBTLE], [0.5, PARCHMENT], [1, SPACE_INDIGO]],
-            showscale=False
-        ))
+    fig_cm = go.Figure(data=go.Heatmap(
+        z=z_vals,
+        x=x_cats,
+        y=y_cats,
+        colorscale=[[0, SURFACE_SUBTLE], [0.5, PARCHMENT], [1, SPACE_INDIGO]],
+        showscale=False
+    ))
 
-        # Add labels — ensure readable font colors
-        for i in range(2):
-            for j in range(2):
-                fig_cm.add_annotation(
-                    x=x_cats[j], y=y_cats[i],
-                    text=text_vals[i][j],
-                    showarrow=False,
-                    font=dict(family="Inter, sans-serif", size=13,
-                              color=TEXT_ON_DARK if z_vals[i][j] > 10000 else SPACE_INDIGO)
-                )
+    # Add labels with dynamic contrast based on cell density
+    max_z = max(max(row) for row in z_vals)
+    for i in range(2):
+        for j in range(2):
+            fig_cm.add_annotation(
+                x=x_cats[j], y=y_cats[i],
+                text=text_vals[i][j],
+                showarrow=False,
+                font=dict(family="Inter, sans-serif", size=13,
+                          color=TEXT_ON_DARK if z_vals[i][j] > max_z * 0.55 else SPACE_INDIGO)
+            )
 
-        fig_cm.update_layout(get_plotly_layout(height=420, title=f"Threshold \u03c4 = {cur_thr:.2f}"))
-        fig_cm.update_yaxes(autorange="reversed")
-        st.plotly_chart(fig_cm, use_container_width=True)
+    fig_cm.update_layout(get_plotly_layout(height=360, title=f"Threshold \u03c4 = {cur_thr:.2f}"))
+    fig_cm.update_yaxes(autorange="reversed")
+    st.plotly_chart(fig_cm, use_container_width=True)
 
     # Cost-utility rationale
     st.markdown(
