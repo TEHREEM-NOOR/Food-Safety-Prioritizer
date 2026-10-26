@@ -457,30 +457,39 @@ footer { visibility: hidden; height: 0; }
 [data-testid="stSidebar"] .stRadio > label p,
 [data-testid="stSidebar"] .stRadio > label {
   color: #FFFFFF !important;
-  font-size: 0.78rem;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  opacity: 0.9;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  opacity: 0.9 !important;
 }
-[data-testid="stSidebar"] [role="radiogroup"] { gap: 4px; }
+[data-testid="stSidebar"] [role="radiogroup"] {
+  gap: 4px;
+}
 [data-testid="stSidebar"] label[data-baseweb="radio"],
 [data-testid="stSidebar"] .stRadio label {
   width: 100%;
   margin: 0;
-  padding: 10px 14px;
+  padding: 8px 12px;
   border-radius: var(--r-sm);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease;
+  transition: background 0.15s ease;
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
 }
 [data-testid="stSidebar"] label[data-baseweb="radio"] p,
 [data-testid="stSidebar"] .stRadio label p,
-[data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] p,
-[data-testid="stSidebar"] [role="radiogroup"] label * {
+[data-testid="stSidebar"] .stRadio label span,
+[data-testid="stSidebar"] label[data-baseweb="radio"] span,
+[data-testid="stSidebar"] .stRadio label div,
+[data-testid="stSidebar"] .stRadio div[data-testid="stMarkdownContainer"] p {
   color: #FFFFFF !important;
-  font-size: 0.92rem;
-  font-weight: 500;
+  font-size: 0.92rem !important;
+  font-weight: 500 !important;
+  visibility: visible !important;
   opacity: 1 !important;
+  display: inline-block !important;
 }
 [data-testid="stSidebar"] label[data-baseweb="radio"]:hover,
 [data-testid="stSidebar"] .stRadio label:hover {
@@ -490,20 +499,17 @@ footer { visibility: hidden; height: 0; }
 [data-testid="stSidebar"] .stRadio label:hover p {
   color: #FFFFFF !important;
 }
-@supports selector(:has(*)) {
-  [data-testid="stSidebar"] label[data-baseweb="radio"] > div:not(:has([data-testid="stMarkdownContainer"])) { display: none; }
-  [data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked),
-  [data-testid="stSidebar"] .stRadio label[data-checked="true"],
-  [data-testid="stSidebar"] .stRadio label[aria-checked="true"] {
-    background: rgba(255, 255, 255, 0.18);
-    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.15);
-  }
-  [data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked) p,
-  [data-testid="stSidebar"] .stRadio label[data-checked="true"] p,
-  [data-testid="stSidebar"] .stRadio label[aria-checked="true"] p {
-    color: #FFFFFF !important;
-    font-weight: 600;
-  }
+[data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked),
+[data-testid="stSidebar"] .stRadio label[data-checked="true"],
+[data-testid="stSidebar"] .stRadio label[aria-checked="true"] {
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+[data-testid="stSidebar"] label[data-baseweb="radio"]:has(input:checked) p,
+[data-testid="stSidebar"] .stRadio label[data-checked="true"] p,
+[data-testid="stSidebar"] .stRadio label[aria-checked="true"] p {
+  color: #FFFFFF !important;
+  font-weight: 600 !important;
 }
 
 
