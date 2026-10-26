@@ -48,8 +48,15 @@ No paths need editing. The demo data (`data/app_sample.csv`) and the trained mod
 
 ## Troubleshooting
 - `streamlit` not recognised: the virtual environment is not active. Repeat step 2.
-- Model loading error or version warning: install the exact versions in `requirements.txt`. The saved models need the same scikit-learn version.
 - Port busy: `streamlit run app.py --server.port 8502`
+- Compatibility note: The application includes internal compatibility shims supporting Python 3.11 up to Python 3.14+ and scikit-learn 1.5 through 1.9+.
+
+## Improved Model Pipeline (v2)
+To run the extended feature engineering and retraining pipeline with TimeSeriesSplit validation:
+```
+python src/train_v2.py
+```
+This produces `models/neural_network_v2.joblib` (AUC: 0.663, Recall: 52.9%, P@5%: 41.9%) and updates `docs/model_results_v2.csv`.
 
 ## Rebuild everything from the raw data (optional)
 Download the Chicago Food Inspections CSV from the Chicago Data Portal and save it as `data/raw_full.csv`, then run in order:
@@ -64,11 +71,11 @@ python src/make_sample.py
 ```
 
 ## Project layout
-- `app.py`: the web application
-- `src/`: cleaning, features, training, drift, explanations
-- `models/`: trained models
-- `data/`: demo sample files
-- `docs/`: audit report, results, data dictionary, leakage statement, design decisions
+- `app.py`: the Streamlit web application
+- `src/`: cleaning, features, training (v1 & v2), drift, explanations, UI theme
+- `models/`: trained models (v1 baseline and v2 improved)
+- `data/`: demo sample files and cleaned datasets
+- `docs/`: audit report, benchmark results, data dictionary, leakage statement, design decisions
 
 ## Method summary
-Time split: train 2010-2014, test 2015-2019. Models: decision tree (used for explanations), naive Bayes, neural network. Source data: Chicago Food Inspections open data.
+Time split: train 2010–2014, test 2015–2019 (strictly preventing chronological data leakage). Models: decision tree (used for explainability), naive Bayes, and neural network (v1 & v2). Source data: Chicago Food Inspections open data (2010–2019).
